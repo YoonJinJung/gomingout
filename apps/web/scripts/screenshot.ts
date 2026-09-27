@@ -29,6 +29,7 @@ const SCREENS = [
   { name: 'post-detail', path: '/posts/p1' },
   { name: 'post-detail-care', path: '/posts/p4' },
   { name: 'write', path: '/write' },
+  { name: 'messages', path: '/messages' },
   { name: 'my', path: '/me' },
   { name: 'login', path: '/login' },
 ] as const;

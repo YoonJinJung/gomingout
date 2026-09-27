@@ -20,7 +20,7 @@ export function Sidebar() {
       </Link>
 
       <nav aria-label="주요 메뉴" className="mt-8 flex flex-col gap-1">
-        {NAV_ITEMS.filter((item) => !item.emphasized).map((item) => {
+        {NAV_ITEMS.filter((item) => item.emphasized !== true).map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
           return (
@@ -37,6 +37,12 @@ export function Sidebar() {
             >
               <Icon size={20} strokeWidth={1.75} aria-hidden />
               {item.label}
+              {/* 사이드바는 여유가 있으므로 "준비 중"을 글자로 알려준다 */}
+              {item.comingSoon === true && (
+                <span className="ml-auto rounded-pill bg-surface-2 px-2 py-0.5 text-caption text-text-subtle">
+                  준비 중
+                </span>
+              )}
             </Link>
           );
         })}

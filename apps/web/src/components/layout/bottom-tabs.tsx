@@ -17,7 +17,9 @@ export function BottomTabs() {
       aria-label="주요 메뉴"
       className="fixed inset-x-0 bottom-0 z-40 border-t bg-surface/95 safe-bottom backdrop-blur lg:hidden"
     >
-      <ul className="mx-auto flex max-w-reading items-stretch justify-around">
+      {/* 아이콘이 상단 경계선에 붙지 않도록 여백을 둔다. 가운데 글쓰기 버튼이 -mt-4로
+          올라오므로 그 공간도 함께 확보된다. */}
+      <ul className="mx-auto flex max-w-reading items-stretch justify-around px-2 pt-2.5 pb-1">
         {NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
@@ -47,8 +49,18 @@ export function BottomTabs() {
                   active ? 'text-primary' : 'text-text-muted',
                 )}
               >
-                <Icon size={20} strokeWidth={1.75} aria-hidden />
+                <span className="relative">
+                  <Icon size={20} strokeWidth={1.75} aria-hidden />
+                  {/* 준비 중 표시는 아주 작은 점 하나로만. 자극적인 배지를 쓰지 않는다 (DESIGN.md 1장) */}
+                  {item.comingSoon === true && (
+                    <span
+                      aria-hidden
+                      className="absolute -top-0.5 -right-1 size-1.5 rounded-pill bg-text-subtle"
+                    />
+                  )}
+                </span>
                 {item.label}
+                {item.comingSoon === true && <span className="sr-only">준비 중</span>}
               </Link>
             </li>
           );
