@@ -12,6 +12,7 @@ export * from './constants/crisis-keywords.js';
 export * from './constants/profile-enums.js';
 export * from './constants/limits.js';
 export * from './constants/brand.js';
+export * from './constants/author-label.js';
 
 // 타입
 export * from './types/api.js';

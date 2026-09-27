@@ -3,6 +3,7 @@ import { CareBox } from '@/components/common/care-box';
 import { Card } from '@/components/common/card';
 import { AuthorLabel } from '@/components/post/author-label';
 import { CategoryChip } from '@/components/post/category-chip';
+import { CommentLikeButton } from '@/components/post/comment-like-button';
 import { CountRow } from '@/components/post/count-row';
 import { formatRelativeKst } from '@/lib/format-time';
 import { MOCK_COMMENTS, MOCK_POSTS } from '@/lib/mock/fixtures';
@@ -72,6 +73,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
                   </span>
                 </div>
                 <p className="mt-2 text-body text-text">{comment.content}</p>
+                <CommentLikeButton
+                  likeCount={comment.likeCount}
+                  liked={comment.viewer?.liked ?? false}
+                />
 
                 {/* 대댓글은 1단계까지 (D18) */}
                 {replies.length > 0 && (
@@ -85,6 +90,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
                           </span>
                         </div>
                         <p className="mt-1 text-body text-text">{reply.content}</p>
+                        <CommentLikeButton
+                          likeCount={reply.likeCount}
+                          liked={reply.viewer?.liked ?? false}
+                        />
                       </li>
                     ))}
                   </ul>

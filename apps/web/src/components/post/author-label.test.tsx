@@ -1,4 +1,4 @@
-import type { PublicAuthor } from '@gomingout/shared';
+import { AUTHOR_LABEL, type PublicAuthor } from '@gomingout/shared';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { AuthorLabel } from './author-label';
@@ -30,6 +30,15 @@ describe('AuthorLabel — 익명 표시', () => {
     render(<AuthorLabel author={author} />);
 
     expect(screen.getByText('글쓴이')).toBeInTheDocument();
+  });
+
+  it('닉네임 글에 단 글쓴이의 익명 댓글도 "글쓴이"로 표시된다 (D22)', () => {
+    // 글이 닉네임이어도 라벨만 글쓴이로 바뀔 뿐 nickname·id는 응답에 없다
+    const author: PublicAuthor = { type: 'anonymous', label: AUTHOR_LABEL.postAuthor, mbti: null };
+    const { container } = render(<AuthorLabel author={author} />);
+
+    expect(container.textContent).toBe('글쓴이');
+    expect(author).not.toHaveProperty('nickname');
   });
 
   it('탈퇴한 사용자는 닉네임을 노출하지 않는다', () => {

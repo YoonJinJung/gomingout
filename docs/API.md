@@ -50,8 +50,9 @@
 |---|---|---|
 | GET | /posts/:id/comments | 댓글 목록 |
 | POST | /posts/:id/comments 🔒 | 작성 (parentId 선택) |
-| PATCH | /comments/:id 🔒 | 수정 |
-| DELETE | /comments/:id 🔒 | 삭제 |
+| PATCH | /comments/:id 🔒 | 수정 (본문만. 익명 여부는 변경 불가) |
+| DELETE | /comments/:id 🔒 | 삭제 (soft delete) |
+| POST / DELETE | /comments/:id/like 🔒 | 댓글 공감 / 취소 (D18, D23) |
 
 ## Reports
 | Method | Path | 설명 |
@@ -107,3 +108,18 @@ type CursorPage<T> = { items: T[]; nextCursor: string | null };
 - 응답 헤더는 전역으로 `Cache-Control: private, no-store`다.
   `viewer` 필드가 캐시를 통해 다른 사용자에게 새면 익명 글의 작성자가 특정될 수 있다.
 - 어드민 신고 처리 API만 예외적으로 작성자를 다룬다(PRD 4장).
+
+### `글쓴이` 라벨 규칙 (D22)
+
+게시글 작성자가 단 댓글은 **글의 익명 여부와 무관하게** `author.label = "글쓴이"`로 내려간다.
+
+```
+익명 글  + 익명 댓글   → "글쓴이"
+익명 글  + 닉네임 댓글 → "글쓴이"  (닉네임은 내려가지 않는다)
+닉네임 글 + 익명 댓글   → "글쓴이"
+닉네임 글 + 닉네임 댓글 → "글쓴이"
+```
+
+닉네임 글에 익명 댓글을 달면 그 댓글의 작성자가 글쓴이임이 드러난다.
+의도된 동작이므로(D22) 댓글 작성 화면에서 이 점을 안내한다.
+`글쓴이`일 때도 `nickname`·`id`는 응답에 포함하지 않는다.

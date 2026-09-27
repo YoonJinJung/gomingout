@@ -1,6 +1,8 @@
 # DB 스키마 초안 (Prisma)
 
-> 초안이다. 미결 사항(대댓글, 댓글 공감 등) 확정 후 조정.
+> 대댓글 1단계·댓글 공감은 D18·D23으로 확정되어 반영했다.
+> 모델은 마일스톤 순서대로 `apps/api/prisma/schema.prisma`에 옮겨 마이그레이션으로 만든다.
+> 구현이 이 문서와 달라지면 같은 커밋에서 문서를 고친다.
 
 ```prisma
 enum Role { USER ADMIN }
@@ -9,7 +11,8 @@ enum ContentStatus { ACTIVE BLINDED DELETED }
 enum ReportTarget { POST COMMENT }
 enum ReportReason { ABUSE SPAM SEXUAL PRIVACY SELF_HARM OTHER }
 enum ReportStatus { PENDING RESOLVED_KEPT RESOLVED_REMOVED DISMISSED }
-enum AgeRange { TEEN_LATE TWENTIES_EARLY TWENTIES_LATE THIRTIES FORTIES_PLUS }
+enum VerificationPurpose { SIGNUP PASSWORD_RESET }
+enum AgeRange { TEEN_MID TEEN_LATE TWENTIES_EARLY TWENTIES_LATE THIRTIES FORTIES_PLUS } // TEEN_MID(14~16)는 가입 하한(D6)을 담는 구간
 enum Gender { MALE FEMALE OTHER }
 enum Occupation { STUDENT JOB_SEEKER EMPLOYEE SELF_EMPLOYED OTHER }
 
@@ -38,12 +41,13 @@ model User {
   bio                String?  @db.VarChar(100)
   bioPublic          Boolean  @default(false)
 
-  posts     Post[]
-  comments  Comment[]
-  likes     PostLike[]
-  scraps    Scrap[]
-  reports   Report[]   @relation("Reporter")
-  sessions  Session[]
+  posts        Post[]
+  comments     Comment[]
+  likes        PostLike[]
+  commentLikes CommentLike[]
+  scraps       Scrap[]
+  reports      Report[]   @relation("Reporter")
+  sessions     Session[]
 }
 
 model Category {
@@ -94,7 +98,7 @@ model Comment {
   post         Post          @relation(fields: [postId], references: [id])
   authorId     String
   author       User          @relation(fields: [authorId], references: [id])
-  parentId     String?                            // 대댓글(1단계), 미결 확정 후 유지/삭제
+  parentId     String?                            // 대댓글 1단계 (D18). 대댓글에는 다시 답글을 달 수 없다
   parent       Comment?      @relation("Replies", fields: [parentId], references: [id])
   replies      Comment[]     @relation("Replies")
   content      String        @db.VarChar(1000)
@@ -107,9 +111,13 @@ model Comment {
   status       ContentStatus @default(ACTIVE)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  editedAt     DateTime?                          // 수정 시에만 기록. "수정됨" 표시용
   deletedAt    DateTime?
 
+  likes        CommentLike[]
+
   @@index([postId, createdAt])
+  @@index([parentId])
 }
 
 // 게시글 내 익명 번호 고정용. 글쓴이는 number=0으로 "글쓴이" 표시
@@ -131,7 +139,16 @@ model PostLike {
   @@id([userId, postId])
 }
 
-// 댓글 공감 확정 시 CommentLike 추가
+// 댓글 공감 (D18, D23). PostLike와 같은 복합 PK 구조로 중복 공감을 DB에서 막는다.
+model CommentLike {
+  userId    String
+  commentId String
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  createdAt DateTime @default(now())
+  @@id([userId, commentId])
+  @@index([commentId])
+}
 
 model Scrap {
   userId    String
@@ -161,7 +178,7 @@ model Report {
 model EmailVerification {
   id        String   @id @default(cuid())
   email     String
-  purpose   String                 // SIGNUP | PASSWORD_RESET
+  purpose   VerificationPurpose
   codeHash  String
   attempts  Int      @default(0)
   expiresAt DateTime

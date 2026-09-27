@@ -21,16 +21,14 @@
 - **테스트 계정 시드 실제 생성** (`apps/api/prisma/seed.ts`의 `TEST_ACCOUNTS`는 정의만 되어 있음)
 - 카테고리 시드 투입
 
-### ⚠️ M3 전에 결정 필요
-닉네임 글 + 익명 댓글에 `글쓴이` 배지를 붙이면 익명 댓글의 신원이 특정된다(절대규칙 1과 충돌).
-제안: 글과 댓글의 익명 여부가 같을 때만 배지를 표시한다. 자세한 내용은 [M0.md](./M0.md) 참고.
+### 확정된 결정 (M0에서 반영 완료)
+- **D22** `글쓴이` 라벨은 글·댓글의 익명 여부와 무관하게 항상 표시. M3에서 댓글 작성 화면에
+  "닉네임 글에 익명 댓글을 달면 글쓴이임이 드러난다"는 안내를 넣어야 한다.
+- **D23** `CommentLike` 모델과 `POST/DELETE /comments/:id/like` API를 SCHEMA.md·API.md에 정의 완료.
+  실제 모델·API 구현은 M3·M4.
 
 ### 문서-코드 불일치 (해당 마일스톤에서 수정)
-- `SCHEMA.md`에 `CommentLike` 모델 없음 (D18에서 댓글 공감 확정됨) → M3·M4
-- 탈퇴 시 `User.nickname` 처리 방식 미정 → M6
-- `AgeRange.TEEN_MID`가 shared에만 있고 `SCHEMA.md`에 없음 → M1
-- `EmailVerification.purpose`가 enum이 아님 → M1
-- `Comment.editedAt` 없음 → M3
+- 탈퇴 시 `User.nickname`(non-null `@unique`) 처리 방식 미정 → M6
 
 ### 미결 (DECISIONS.md)
 - 닉네임 변경 제한 (제안: 30일 1회)
