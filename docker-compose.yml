@@ -1,0 +1,38 @@
+# 로컬 개발용. 배포(M8)에서는 Supabase Postgres + Resend로 대체된다.
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: gomingout-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gomingout
+      POSTGRES_PASSWORD: gomingout_local
+      POSTGRES_DB: gomingout
+      # 시간은 DB에 UTC로 저장한다 (CLAUDE.md 코드 컨벤션)
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - '5432:5432'
+    volumes:
+      - gomingout-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gomingout -d gomingout']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # 로컬 메일 확인용. EmailSender의 SMTP 구현이 여기로 보낸다.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: gomingout-mailpit
+    restart: unless-stopped
+    ports:
+      - '1025:1025' # SMTP
+      - '8025:8025' # 웹 UI
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  gomingout-db-data:

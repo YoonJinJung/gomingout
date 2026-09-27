@@ -1,0 +1,37 @@
+{
+  "name": "gomingout",
+  "version": "0.0.0",
+  "private": true,
+  "description": "고밍아웃 — 고민 상담 익명 커뮤니티 (모노레포 루트)",
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=22.12.0 <23"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @gomingout/shared build && pnpm -r --parallel run dev",
+    "build": "pnpm --filter @gomingout/shared build && pnpm --filter @gomingout/api build && pnpm --filter @gomingout/web build",
+    "typecheck": "pnpm --filter @gomingout/shared build && pnpm -r run typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm --filter @gomingout/shared build && pnpm -r run test",
+    "screenshot": "pnpm --filter @gomingout/web screenshot",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d",
+    "db:logs": "docker compose logs -f",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.4",
+    "eslint": "10.11.0",
+    "globals": "17.12.0",
+    "prettier": "3.9.9",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.1"
+  }
+}

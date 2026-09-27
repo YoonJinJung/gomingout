@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.next/
+out/
+coverage/
+pnpm-lock.yaml
+docs/progress/screenshots/
+apps/web/public/fonts/
+apps/api/prisma/migrations/
