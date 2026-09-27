@@ -5,6 +5,13 @@ const API_ORIGIN = process.env.API_ORIGIN ?? 'http://localhost:4000';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  // Next가 apps/web에 AGENTS.md·CLAUDE.md를 자동 생성하는 것을 끈다.
+  // 이 프로젝트의 작업 지침은 루트 CLAUDE.md 하나로 관리한다.
+  agentRules: false,
+
+  // 개발 인디케이터 배지가 하단 탭을 가려 스크린샷 확인을 방해하므로 끈다.
+  devIndicators: false,
+
   /**
    * /api/* 를 Express 서버로 넘긴다 (CLAUDE.md 로컬 개발 원칙 2, T3).
    *

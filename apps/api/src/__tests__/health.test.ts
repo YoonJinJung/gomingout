@@ -15,7 +15,8 @@ describe('GET /api/health', () => {
       db: expect.stringMatching(/^(up|down)$/) as string,
     });
     // 시간은 UTC(ISO 8601)로 내려간다
-    expect(new Date(res.body.time as string).toISOString()).toBe(res.body.time);
+    const body = res.body as { time: string };
+    expect(new Date(body.time).toISOString()).toBe(body.time);
   });
 
   it('응답을 캐시하지 않는다 — viewer 상태가 다른 사용자에게 새는 것을 막는다', async () => {

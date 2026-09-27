@@ -29,6 +29,8 @@
 | GET | /users/:nickname/posts | 타인의 닉네임 글 목록 (익명 글 제외) |
 
 ## Categories
+| Method | Path | 설명 |
+|---|---|---|
 | GET | /categories | 대분류-소분류 트리 |
 
 ## Posts
@@ -52,6 +54,8 @@
 | DELETE | /comments/:id 🔒 | 삭제 |
 
 ## Reports
+| Method | Path | 설명 |
+|---|---|---|
 | POST | /reports 🔒 | 신고 (targetType, targetId, reason, detail) |
 
 ## Admin 🛡️
@@ -64,17 +68,42 @@
 | PATCH | /admin/users/:id/status | 사용자 정지/해제 |
 
 ## 공개 응답 형태 (익명 보호)
+
+> 실제 정의는 `packages/shared/src/types/api.ts`에 있다. 이 문서와 코드가 다르면 버그다.
+
 ```ts
 type PublicAuthor =
-  | { type: "nickname"; nickname: string; mbti: string | null } // mbti는 mbtiPublic일 때만
-  | { type: "anonymous"; label: string; mbti: string | null };   // label: "익명" | "익명3" | "글쓴이"
+  | { type: 'nickname';  nickname: string; mbti: Mbti | null } // mbti는 mbtiPublic일 때만
+  | { type: 'anonymous'; label: string;    mbti: Mbti | null } // label: "익명" | "익명3" | "글쓴이"
+  | { type: 'deleted' };                                        // 탈퇴한 사용자 (D18)
 
 type PublicPost = {
-  id: string; category: { slug: string; name: string; parent: string };
+  id: string; category: { slug: string; name: string; parent: { slug: string; name: string } };
   title: string; content: string; author: PublicAuthor;
   likeCount: number; commentCount: number; scrapCount: number;
-  crisisFlag: boolean; createdAt: string; editedAt: string | null;
+  crisisFlag: boolean; blinded: boolean;
+  createdAt: string; editedAt: string | null;
   viewer?: { liked: boolean; scrapped: boolean; isMine: boolean };
 };
+
+// 목록(피드)에서는 본문 전체 대신 미리보기만 보낸다
+type PublicPostSummary = Omit<PublicPost, 'content' | 'viewer'> & { preview: string };
+
+type PublicComment = {
+  id: string; postId: string; parentId: string | null; // 대댓글 1단계 (D18)
+  content: string; author: PublicAuthor;
+  likeCount: number; crisisFlag: boolean; blinded: boolean;
+  createdAt: string; editedAt: string | null;
+  viewer?: { liked: boolean; isMine: boolean };
+};
+
+type CursorPage<T> = { items: T[]; nextCursor: string | null };
 ```
-익명 author에는 id·nickname을 절대 포함하지 않는다.
+
+### 지켜야 할 것
+
+- 익명 author에는 id·nickname을 절대 포함하지 않는다.
+- 모든 응답은 serializer(`toPublicPost`·`toPublicComment`)를 거친다. Prisma 결과 직접 반환 금지.
+- 응답 헤더는 전역으로 `Cache-Control: private, no-store`다.
+  `viewer` 필드가 캐시를 통해 다른 사용자에게 새면 익명 글의 작성자가 특정될 수 있다.
+- 어드민 신고 처리 API만 예외적으로 작성자를 다룬다(PRD 4장).

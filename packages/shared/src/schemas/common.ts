@@ -7,12 +7,7 @@ import { PAGINATION } from '../constants/limits.js';
  */
 export const cursorQuerySchema = z.object({
   cursor: z.string().min(1).optional(),
-  limit: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .max(PAGINATION.maxLimit)
-    .default(PAGINATION.defaultLimit),
+  limit: z.coerce.number().int().min(1).max(PAGINATION.maxLimit).default(PAGINATION.defaultLimit),
 });
 
 export type CursorQuery = z.infer<typeof cursorQuerySchema>;

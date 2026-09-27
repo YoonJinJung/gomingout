@@ -32,13 +32,7 @@ export const GENDER_LABELS: Record<Gender, string> = {
   OTHER: '기타',
 };
 
-export const OCCUPATIONS = [
-  'STUDENT',
-  'JOB_SEEKER',
-  'EMPLOYEE',
-  'SELF_EMPLOYED',
-  'OTHER',
-] as const;
+export const OCCUPATIONS = ['STUDENT', 'JOB_SEEKER', 'EMPLOYEE', 'SELF_EMPLOYED', 'OTHER'] as const;
 export type Occupation = (typeof OCCUPATIONS)[number];
 
 export const OCCUPATION_LABELS: Record<Occupation, string> = {

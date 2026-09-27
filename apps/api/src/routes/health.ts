@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import { Router, type Router as ExpressRouter } from 'express';
 import { prisma } from '../db/prisma.js';
 
-export const healthRouter = Router();
+export const healthRouter: ExpressRouter = Router();
 
 /**
  * GET /api/health

@@ -61,12 +61,12 @@ export const CATEGORY_SEED: readonly CategorySeedParent[] = [
     ],
   },
   {
-    slug: 'body',
-    name: '몸',
+    slug: 'appearance',
+    name: '외모',
     children: [
-      { slug: 'health', name: '건강' },
-      { slug: 'appearance', name: '외모' },
       { slug: 'diet', name: '다이어트' },
+      { slug: 'skin-hair', name: '피부·헤어' },
+      { slug: 'body-health', name: '건강' },
     ],
   },
   {

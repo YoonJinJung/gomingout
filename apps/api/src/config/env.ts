@@ -1,4 +1,18 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { z } from 'zod';
+
+/**
+ * .env를 명시적으로 읽는다.
+ *
+ * Node도 tsx도 .env를 자동으로 읽어주지 않는다. dev·test·build가 서로 다르게
+ * 동작하는 것을 막기 위해 이 모듈에서 한 번만 읽는다.
+ * 배포(Vercel)에서는 .env 파일이 없고 플랫폼이 환경변수를 주입하므로 건너뛴다.
+ */
+const envFile = path.resolve(import.meta.dirname, '../../.env');
+if (existsSync(envFile)) {
+  process.loadEnvFile(envFile);
+}
 
 /**
  * 환경변수는 이 모듈 한 곳에서만 읽는다(CLAUDE.md 로컬 개발 원칙 5).
@@ -44,7 +58,9 @@ function loadEnv(): Env {
     const issues = parsed.error.issues
       .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
       .join('\n');
-    throw new Error(`환경변수 설정이 올바르지 않습니다.\n${issues}\n\napps/api/.env.example을 참고하세요.`);
+    throw new Error(
+      `환경변수 설정이 올바르지 않습니다.\n${issues}\n\napps/api/.env.example을 참고하세요.`,
+    );
   }
 
   return parsed.data;

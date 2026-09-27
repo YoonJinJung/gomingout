@@ -6,7 +6,7 @@ import { Logo } from './logo';
  */
 export function AppBar() {
   return (
-    <header className="bg-bg/90 sticky top-0 z-30 border-b backdrop-blur lg:hidden">
+    <header className="sticky top-0 z-30 border-b bg-bg/90 backdrop-blur lg:hidden">
       <div className="mx-auto flex min-h-14 max-w-reading items-center px-4">
         <Logo />
       </div>

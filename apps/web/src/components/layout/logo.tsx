@@ -12,13 +12,10 @@ export function Logo({ className }: { className?: string }) {
           viewBox="0 0 20 20"
           fill="none"
           aria-hidden
-          className="text-primary shrink-0"
+          className="shrink-0 text-primary"
         >
           {/* 초승달 */}
-          <path
-            d="M13.2 2.6a7.6 7.6 0 1 0 4.2 12.9A8.6 8.6 0 0 1 13.2 2.6Z"
-            fill="currentColor"
-          />
+          <path d="M13.2 2.6a7.6 7.6 0 1 0 4.2 12.9A8.6 8.6 0 0 1 13.2 2.6Z" fill="currentColor" />
           <circle cx="16.4" cy="4.4" r="1.05" fill="currentColor" opacity="0.75" />
         </svg>
         <span className="text-title-sm text-text">고밍아웃</span>

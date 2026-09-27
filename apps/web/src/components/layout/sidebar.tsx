@@ -44,7 +44,7 @@ export function Sidebar() {
 
       <Link
         href="/write"
-        className="bg-primary text-on-primary hover:bg-primary-strong mt-6 flex min-h-11 items-center justify-center gap-2 rounded-control px-4 text-body-sm font-semibold transition-colors duration-150"
+        className="mt-6 flex min-h-11 items-center justify-center gap-2 rounded-control bg-primary px-4 text-body-sm font-semibold text-on-primary transition-colors duration-150 hover:bg-primary-strong"
       >
         글쓰기
       </Link>
@@ -52,7 +52,7 @@ export function Sidebar() {
       <div className="mt-auto">
         <Link
           href="/login"
-          className="text-text-muted hover:text-text flex min-h-11 items-center px-3 text-body-sm transition-colors duration-150"
+          className="flex min-h-11 items-center px-3 text-body-sm text-text-muted transition-colors duration-150 hover:text-text"
         >
           로그인
         </Link>

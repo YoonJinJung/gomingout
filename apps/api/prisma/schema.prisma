@@ -1,6 +1,9 @@
 // 고밍아웃 DB 스키마.
 // 모델 정의는 M1부터 마일스톤 순서대로 추가한다(SCHEMA.md 참조).
 // 스키마 변경은 반드시 Prisma migration으로만 한다(CLAUDE.md 작업 방식).
+//
+// Prisma 7부터 연결 URL은 이 파일이 아니라 prisma.config.ts에 둔다.
+// 런타임 연결은 PrismaClient에 driver adapter로 주입한다(src/db/prisma.ts).
 
 generator client {
   provider = "prisma-client"
@@ -9,8 +12,4 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // 로컬: Docker Postgres. 배포(M8): Supabase 풀러(pgbouncer=true) — T2
-  url = env("DATABASE_URL")
-  // 마이그레이션 전용 직접 연결. 로컬에서는 DATABASE_URL과 같은 값이어도 된다 — T2
-  directUrl = env("DIRECT_URL")
 }

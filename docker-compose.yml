@@ -12,7 +12,7 @@ services:
       TZ: UTC
       PGTZ: UTC
     ports:
-      - '5432:5432'
+      - '5433:5432' # 호스트 5432는 다른 프로젝트가 쓰고 있어 5433으로 노출한다
     volumes:
       - gomingout-db-data:/var/lib/postgresql/data
     healthcheck:

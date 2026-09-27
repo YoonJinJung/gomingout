@@ -1,3 +1,4 @@
+import { BRAND_COLORS } from '@gomingout/shared';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { AppShell } from '@/components/layout/app-shell';
@@ -30,7 +31,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   // 하단 탭 safe-area를 쓰기 위해 필요 (DESIGN.md 6장)
   viewportFit: 'cover',
-  themeColor: '#0E1123', // DESIGN.md 13장
+  themeColor: BRAND_COLORS.theme, // DESIGN.md 13장 — M7 manifest와 같은 상수를 쓴다
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

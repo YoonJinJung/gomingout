@@ -20,13 +20,13 @@ export class ApiClientError extends Error {
 
 function isApiErrorBody(value: unknown): value is ApiErrorBody {
   if (typeof value !== 'object' || value === null || !('error' in value)) return false;
-  const { error } = value as { error: unknown };
+  const { error } = value;
   return (
     typeof error === 'object' &&
     error !== null &&
     'code' in error &&
     'message' in error &&
-    typeof (error as { message: unknown }).message === 'string'
+    typeof error.message === 'string'
   );
 }
 

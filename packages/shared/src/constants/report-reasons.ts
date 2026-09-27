@@ -1,12 +1,5 @@
 /** 신고 사유. Prisma enum ReportReason과 1:1로 대응한다. */
-export const REPORT_REASONS = [
-  'ABUSE',
-  'SPAM',
-  'SEXUAL',
-  'PRIVACY',
-  'SELF_HARM',
-  'OTHER',
-] as const;
+export const REPORT_REASONS = ['ABUSE', 'SPAM', 'SEXUAL', 'PRIVACY', 'SELF_HARM', 'OTHER'] as const;
 
 export type ReportReason = (typeof REPORT_REASONS)[number];
 

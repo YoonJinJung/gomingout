@@ -15,7 +15,7 @@ export function BottomTabs() {
   return (
     <nav
       aria-label="주요 메뉴"
-      className="bg-surface/95 safe-bottom fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-surface/95 safe-bottom backdrop-blur lg:hidden"
     >
       <ul className="mx-auto flex max-w-reading items-stretch justify-around">
         {NAV_ITEMS.map((item) => {
@@ -28,7 +28,7 @@ export function BottomTabs() {
                 <Link
                   href={item.href}
                   aria-label={item.label}
-                  className="bg-primary text-on-primary hover:bg-primary-strong -mt-4 flex size-14 items-center justify-center rounded-pill transition-colors duration-150"
+                  className="-mt-4 flex size-14 items-center justify-center rounded-pill bg-primary text-on-primary transition-colors duration-150 hover:bg-primary-strong"
                 >
                   <Icon size={24} strokeWidth={1.75} aria-hidden />
                 </Link>

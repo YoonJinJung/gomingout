@@ -7,3 +7,7 @@ pnpm-lock.yaml
 docs/progress/screenshots/
 apps/web/public/fonts/
 apps/api/prisma/migrations/
+
+# 사람이 직접 쓴 문서는 Prettier가 표·줄바꿈을 재배치하지 않게 제외한다
+docs/
+CLAUDE.md
