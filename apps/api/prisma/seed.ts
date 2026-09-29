@@ -38,9 +38,16 @@ export const TEST_ACCOUNTS = [
   {
     email: 'admin@gomingout.local',
     password: 'admin1234!',
-    nickname: '운영자',
+    nickname: '관리자',
     mbti: 'ISTJ',
     role: 'ADMIN',
+  },
+  {
+    email: 'super@gomingout.local',
+    password: 'super1234!',
+    nickname: '운영자',
+    mbti: 'INTJ',
+    role: 'SUPER_ADMIN',
   },
 ] as const;
 

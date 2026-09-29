@@ -30,8 +30,11 @@
 ### 문서-코드 불일치 (해당 마일스톤에서 수정)
 - 탈퇴 시 `User.nickname`(non-null `@unique`) 처리 방식 미정 → M6
 
-### 미결 (DECISIONS.md)
-- 닉네임 변경 제한 (제안: 30일 1회)
-- 게시글 수정 허용 범위
-- 어드민 계정 생성 방식
-- 서비스 도메인
+### M1 착수 전 결정 — 완료 ✅
+- **D25** 닉네임 변경 7일 2회 → `NicknameChange` 이력 테이블 추가, `nicknameChangedAt` 제거
+- **D26** `Role { USER, ADMIN, SUPER_ADMIN }` — 권한 분기는 M5
+- **D27** 토큰 구성·기간 확정 (access 15분 / refresh 30일 회전·재사용 감지 / 코드 6자리 10분)
+
+### 남은 미결 (DECISIONS.md)
+- 게시글 수정 허용 범위 — M2 전까지
+- 서비스 도메인 — M8 전까지 (Resend 도메인 인증과 엮임)

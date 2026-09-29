@@ -96,11 +96,35 @@ T2와 정확히 맞물린다. 배포 시 런타임은 Supabase 풀러(pgbouncer)
 ```
 이메일 입력 → 인증 코드 발송(mock이면 콘솔) → 코드 검증 → 단기 verification 토큰
   → 비밀번호·연령·약관·프로필 입력 → 가입
-  → access token(JWT 15분) + refresh token(DB 저장·해시, 30일), 둘 다 httpOnly 쿠키  ← T4
+  → access token + refresh token, 둘 다 httpOnly 쿠키  ← T4, D27
 ```
 
-쿠키의 `secure` 플래그는 `config/env.ts`의 `cookieBaseOptions`가 `NODE_ENV`로 분기한다.
-로컬은 http라 `secure: false`, 배포는 https라 `true`.
+### 토큰 구성 (D27)
+
+| 토큰 | 형태 | 기간 | 저장 |
+|---|---|---|---|
+| access | JWT | 15분 | 저장하지 않음(무상태) |
+| refresh | 랜덤 32바이트 | 30일 | `Session.refreshTokenHash`(해시) |
+| 이메일 인증 코드 | 6자리 숫자 | 10분 | `EmailVerification.codeHash`(해시) |
+| verification 토큰 | 단기 JWT, 1회용 | 10분 | 저장하지 않음 |
+
+### 지켜야 할 것
+
+- **평문 저장 금지**: refresh token과 인증 코드는 해시만 저장한다. DB가 유출돼도 그대로 쓸 수 없어야 한다.
+- **refresh 회전 + 재사용 감지**: 갱신할 때마다 새 세션을 만들고 이전 세션에 `rotatedToId`를 남긴다.
+  이미 회전된 토큰이 다시 들어오면 탈취로 보고 **해당 사용자의 모든 세션을 끊는다**.
+- **시도 제한**: 인증 코드는 5회까지, 재발송은 60초 쿨다운. 로그인·가입·코드 발송에 rate limit을 건다.
+- **계정 존재 여부를 흘리지 않는다**: 비밀번호 재설정은 가입된 이메일이든 아니든 같은 응답을 준다.
+  로그인 실패도 "이메일이 없음"과 "비밀번호 틀림"을 구분하지 않는다(`INVALID_CREDENTIALS` 하나).
+- **비밀번호**: bcryptjs 해싱(T5). 72바이트를 넘으면 잘리므로 입력 길이를 제한한다.
+- 쿠키의 `secure` 플래그는 `config/env.ts`의 `cookieBaseOptions`가 `NODE_ENV`로 분기한다.
+  로컬은 http라 `secure: false`, 배포는 https라 `true`.
+
+### 권한 (D26)
+
+`Role`은 `USER` / `ADMIN` / `SUPER_ADMIN` 3단계다.
+M1에서는 enum과 시드 계정만 만들고, 두 관리자 역할을 구분하지 않는다.
+권한 분기(예: 사용자 정지·영구 삭제는 SUPER_ADMIN만)는 어드민 기능이 생기는 M5에서 넣는다.
 
 ## 익명 처리 흐름 (핵심)
 

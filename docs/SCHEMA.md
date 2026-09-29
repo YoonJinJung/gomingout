@@ -5,7 +5,7 @@
 > 구현이 이 문서와 달라지면 같은 커밋에서 문서를 고친다.
 
 ```prisma
-enum Role { USER ADMIN }
+enum Role { USER ADMIN SUPER_ADMIN } // 권한 분기는 M5에서 (D26)
 enum UserStatus { ACTIVE SUSPENDED DELETED }
 enum ContentStatus { ACTIVE BLINDED DELETED }
 enum ReportTarget { POST COMMENT }
@@ -29,7 +29,7 @@ model User {
   deletedAt       DateTime?
 
   nickname           String   @unique
-  nicknameChangedAt  DateTime?
+  // 변경 이력은 NicknameChange가 관리한다 (D25). 여기에 마지막 시각을 두면 7일 2회를 셀 수 없다
   mbti               String                      // "INFP" 등, shared 상수로 검증
   mbtiPublic         Boolean  @default(true)
   ageRange           AgeRange?
@@ -41,8 +41,9 @@ model User {
   bio                String?  @db.VarChar(100)
   bioPublic          Boolean  @default(false)
 
-  posts        Post[]
-  comments     Comment[]
+  posts           Post[]
+  comments        Comment[]
+  nicknameChanges NicknameChange[]
   likes        PostLike[]
   commentLikes CommentLike[]
   scraps       Scrap[]
@@ -187,14 +188,33 @@ model EmailVerification {
   @@index([email, purpose])
 }
 
+// 닉네임 변경 이력 (D25). 7일 동안 2회 제한을 판정하고, 운영 시 변경 내역을 확인한다.
+model NicknameChange {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  from      String
+  to        String
+  createdAt DateTime @default(now())
+  // "최근 7일 내 몇 번 바꿨나"를 바로 세기 위한 인덱스
+  @@index([userId, createdAt])
+}
+
+// refresh token 세션 (D27). access token은 상태를 두지 않는다.
 model Session {
   id               String    @id @default(cuid())
   userId           String
   user             User      @relation(fields: [userId], references: [id])
+  // 평문을 저장하지 않는다. DB가 유출돼도 토큰을 그대로 쓸 수 없게 한다.
   refreshTokenHash String    @unique
   expiresAt        DateTime
   revokedAt        DateTime?
+  // 회전(rotation): 갱신할 때마다 새 세션을 만들고 이전 것을 여기로 연결한다.
+  // 이미 회전된(=사용된) 토큰이 다시 들어오면 탈취로 보고 해당 사용자의 세션을 전부 끊는다.
+  rotatedToId      String?   @unique
   createdAt        DateTime  @default(now())
+
+  @@index([userId])
 }
 ```
 
